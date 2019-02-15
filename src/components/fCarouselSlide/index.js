@@ -15,7 +15,7 @@ const fCarouselSlide = class FCarouselSlide extends LitElement {
     return html`
       <style>
         :host {
-          display: none;
+          display: block;
           width: 100%;
           box-sizing: border-box;
         }

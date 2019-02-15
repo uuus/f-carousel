@@ -5,17 +5,36 @@ import '../fCarouselSlide';
 const fCarousel = class FCarousel extends LitElement {
   static get properties() {
     return {
+      selected: { type: String, reflect: true },
     };
   }
 
   constructor() {
     super();
+    this.slideElement = [...this.children];
+    this.setSelected(this.slideElement[0]);
     this.index = 0;
+  }
 
-    const slideElement = [...this.children];
-    slideElement.forEach(e => {
-      console.log(e);
-    })
+  setSelected (target) {
+    target.setAttribute('selected', '');
+    this.requestUpdate();
+  }
+
+  removeSelected (target) {
+    target.removeAttribute('selected');
+    this.requestUpdate();
+  }
+
+  attributeChangedCallback(name, oldval, newval) {
+    console.log('attribute change: ', name, newval);
+    super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  updated(changedProperties) {
+    changedProperties.forEach((oldValue, propName) => {
+      console.log(`${propName} changed. oldValue: ${oldValue}`);
+    });
   }
 
   render() {
@@ -27,24 +46,14 @@ const fCarousel = class FCarousel extends LitElement {
           overflow:hidden;
           height: 350px;
         }
-        ::slotted(f-carousel-slide:first-child) {
-          display: inline-block;
-          width: 100%;
-          box-sizing: border-box;
+        ::slotted(f-carousel-slide) {
+          position:absolute;
+          width:100%;
+          left:0;
+          top:0;  
         }
-        ::slotted(.next) {
-          display: inline-block;
-          position: absolute;
-          top: 0;
-          left: 0;
-          transform: translateX(100%);
-        }
-        ::slotted(.prev) {
-          display: inline-block;
-          position: absolute;
-          top: 0;
-          left: 0;
-          transform: translateX(-100%);
+        ::slotted(f-carousel-slide:not([selected])) {
+          display: none;
         }
         button {
           position: absolute;
@@ -84,89 +93,108 @@ const fCarousel = class FCarousel extends LitElement {
 
   next () {
     let index = this.index
-    const slides = this.querySelectorAll('f-carousel-slide');
-    [...slides].forEach(e => {
-      if (e.classList.contains('prev')) {
-        e.classList.remove('prev');
-      }
-      e.style = '';
-    })
     if (index === 0) {
-      this.nextSlideAnimation(slides, index);
+      this.removeSelected(this.slideElement[index]);
+      this.setSelected(this.slideElement[index + 1]);
+      this.resetStyle(this.slideElement[this.slideElement.length - 1]);
+      this.nextSlideAnimation(this.slideElement, index);
       this.index++;
-    } else if (index !== 0 && index < slides.length - 1) {
-      this.nextSlideAnimation(slides, index);
-      slides[index - 1].style = '';
-      slides[index - 1].classList.remove('next');
+    } else if (index !== 0 && index < this.slideElement.length - 1) {
+      this.removeSelected(this.slideElement[index]);
+      this.setSelected(this.slideElement[index + 1]);
+      this.resetStyle(this.slideElement[index - 1]);
+      this.nextSlideAnimation(this.slideElement, index);
       this.index++;
     } else {
-      this.nextSlideAnimationLast(slides, index);
-      slides[index - 1].style = '';
-      [...slides].forEach((e, i) => {
-        if (i === 0) return;
-        e.classList.remove('next');
-        e.style = '';
-      })
+      this.removeSelected(this.slideElement[index]);
+      this.setSelected(this.slideElement[0]);
+      this.resetStyle(this.slideElement[index - 1]);
+      this.nextSlideAnimationLast(this.slideElement, index);
       this.index = 0;
     }
   }
 
-  nextSlideAnimation (target, index) {
-    target[index + 1].classList.add('next');
-    target[index].style.transform = 'translateX(-100%)';
-    target[index + 1].style.transition = 'transform 1000ms ease';
-    target[index + 1].style.transform = 'translateX(0%)';
+  previous () {
+    let index = this.index
+    if (index === 0) {
+      this.removeSelected(this.slideElement[index]);
+      this.setSelected(this.slideElement[this.slideElement.length - 1]);
+      this.resetStyle(this.slideElement[index + 1]);
+      this.prevSlideAnimationFirst(this.slideElement, index);
+      this.index = this.slideElement.length - 1;
+    } else if (index !== this.slideElement.length - 1 && index > 0) {
+      this.removeSelected(this.slideElement[index]);
+      this.setSelected(this.slideElement[index - 1]);
+      this.resetStyle(this.slideElement[index + 1]);
+      this.prevSlideAnimation(this.slideElement, index);
+      this.index--;
+    } else {
+      this.removeSelected(this.slideElement[index]);
+      this.setSelected(this.slideElement[index - 1]);
+      this.resetStyle(this.slideElement[0]);
+      this.prevSlideAnimation(this.slideElement, index);
+      this.index--;
+    }
   }
 
-  prevSlideAnimation (target, index) {
-    target[index - 1].classList.add('prev');
-    target[index - 1].style.transition = 'transform 1000ms ease';
-    target[index].style.transform = 'translateX(100%)';
-    target[index - 1].style.transform = 'translateX(0%)';
+  nextSlideAnimation (target, index) {
+    this.nextAnimationStyle(target[index + 1]);
+    this.currentNextAnimationStyle(target[index]);
+    setTimeout(() => {
+      target[index + 1].style.transform = 'translate3d(0, 0, 0)';
+    }, 10);
   }
 
   nextSlideAnimationLast (target, index) {
-    target[0].classList.add('next');
-    target[0].style.transition = 'transform 1000ms ease';
-    target[index].style.transform = 'translateX(-100%)';
-    target[0].style.transform = 'translateX(0%)';
+    this.nextAnimationStyle(target[0]);
+    this.currentNextAnimationStyle(target[index]);
+    setTimeout(() => {
+      target[0].style.transform = 'translate3d(0, 0, 0)';
+    }, 10);
+  }
+
+  nextAnimationStyle (target) {
+    target.style.display = 'inline-block';
+    target.style.transition = 'transform 500ms ease';
+    target.style.transform = 'translate3d(100%, 0, 0)';
+  }
+
+  currentNextAnimationStyle (target) {
+    target.style.display = 'inline-block';
+    target.style.transition = 'transform 500ms ease';
+    target.style.transform = 'translate3d(-100%, 0, 0)';
+  }
+
+  prevSlideAnimation (target, index) {
+    this.prevAnimationStyle(target[index - 1]);
+    this.currentPrevAnimationStyle(target[index]);
+    setTimeout(() => {
+      target[index - 1].style.transform = 'translate3d(0, 0, 0)';
+    }, 10);
   }
 
   prevSlideAnimationFirst (target, index) {
-    target[target.length - 1].classList.add('prev');
-    target[target.length - 1].style.transition = 'transform 1000ms ease';
-    target[index].style.transform = 'translateX(100%)';
-    target[target.length - 1].style.transform = 'translateX(0%)';
+    this.prevAnimationStyle(target[target.length - 1]);
+    this.currentPrevAnimationStyle(target[index]);
+    setTimeout(() => {
+      target[target.length - 1].style.transform = 'translate3d(0, 0, 0)';
+    }, 10);
   }
 
-  previous () {
-    let index = this.index
-    const slides = this.querySelectorAll('f-carousel-slide');
-    [...slides].forEach(e => {
-      if (e.classList.contains('next')) {
-        e.classList.remove('next');
-      }
-      e.style = '';
-    })
-    if (index === 0) {
-      this.prevSlideAnimationFirst(slides, index);
-      slides[index + 1].style = '';
-      [...slides].forEach((e, i) => {
-        if (i === slides.length - 1) return;
-        e.classList.remove('prev');
-        e.style = '';
-      })
-      this.index = slides.length - 1;
-    } else if (index !== slides.length - 1 && index > 0) {
-      this.prevSlideAnimation(slides, index);
-      slides[index + 1].style = '';
-      slides[index + 1].classList.remove('prev');
-      this.index--;
-    } else {
-      this.prevSlideAnimation(slides, index);
-      slides[0].style = '';
-      this.index--;
-    }
+  prevAnimationStyle (target) {
+    target.style.display = 'inline-block';
+    target.style.transition = 'transform 500ms ease';
+    target.style.transform = 'translate3d(-100%, 0, 0)';
+  }
+
+  currentPrevAnimationStyle (target) {
+    target.style.display = 'inline-block';
+    target.style.transition = 'transform 500ms ease';
+    target.style.transform = 'translate3d(100%, 0, 0)';
+  }
+
+  resetStyle (target) {
+    target.style = '';
   }
 
 }
