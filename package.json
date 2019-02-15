@@ -1,0 +1,26 @@
+{
+  "name": "f-carousel",
+  "version": "1.0.0",
+  "description": "a simple carousel component for FTO",
+  "main": "index.js",
+  "flat": true,
+  "author": "Yuki Usui",
+  "scripts": {
+    "start": "rollup -c rollup.local.config.js --watch -m"
+  },
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@glidejs/glide": "^3.2.6",
+    "lit-element": "^2.0.1",
+    "rollup": "^1.1.2",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-copy": "^0.2.3",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-serve": "^1.0.1"
+  },
+  "resolutions": {
+    "kind-of": "6.0.2",
+    "is-number": "4.0.0"
+  }
+}
