@@ -4,6 +4,10 @@ export default self => html`
     <div class="slides">
       <slot></slot>
     </div>
-    <button id="prevBtn" @click="${self.prevButtonHandle}" tabindex="0">❮</button>
-    <button id="nextBtn" @click="${self.nextButtonHandle}" tabindex="0">❯</button>
+    <div class="navigators">
+      <button id="prevBtn" class="controller" @click="${self.prevButtonHandle}">❮</button>
+      <button id="nextBtn" class="controller" @click="${self.nextButtonHandle}">❯</button>
+    </div>
+    <div class="indicator">
+    </div>
   `;

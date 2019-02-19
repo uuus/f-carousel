@@ -1,30 +1,39 @@
 import { LitElement, html} from 'lit-element';
 import template from './template';
-import '../fCarouselSlide';
 
 const fCarousel = class FCarousel extends LitElement {
   static get properties() {
     return {
       width: { type: String, reflect: true },
+      autoplay: { type: Boolean, refrect: true},
+      interval: { type: Number, refrect: true},
+      navigator: { type: Boolean, refrect: true},
+      indicator: { type: Boolean, reflect: true}
     };
   }
 
   constructor() {
     super();
+    this.width = '100%';
+    this.autoplay = false;
+    this.interval = 3000;
+    this.navigator = false;
+    this.indicator = false;
+    this.autoPlayInterval = null;
     this.index = 0;
     this.slideElements = [];
     this.selectedElement = null;
     this.slidesWrap = null;
     this.prevNode = null;
     this.nextNode = null;
-    this.width = '100%';
+    this.indicatorBullets = [];
     this.swipeMoving = false;
     this.nextFlag = false;
     this.prevFlag = false;
     this.isTouchDevice = 'ontouchstart' in window;
-    this.swipeStart    = this.isTouchDevice ? 'touchstart' : 'mousedown';
-    this.swipeMove     = this.isTouchDevice ? 'touchmove'  : 'mousemove';
-    this.swipeEnd      = this.isTouchDevice ? 'touchend'   : 'mouseup';
+    this.swipeStart = this.isTouchDevice ? 'touchstart' : 'mousedown';
+    this.swipeMove = this.isTouchDevice ? 'touchmove'  : 'mousemove';
+    this.swipeEnd = this.isTouchDevice ? 'touchend'   : 'mouseup';
   }
 
   attributeChangedCallback(name, oldval, newval) {
@@ -39,6 +48,9 @@ const fCarousel = class FCarousel extends LitElement {
     this.slidesWrap = this.shadowRoot.querySelector('.slides');
     this.setSelected(this.slideElements[0]);
     this.cloneLastSlide();
+    this.autoPlay();
+    this.createNavigator();
+    this.indicatorBullets = this.createIndicator();
     this.addEventListener(this.swipeStart, this.onSwipeStart);
   }
 
@@ -68,7 +80,7 @@ const fCarousel = class FCarousel extends LitElement {
         ::slotted(f-carousel-slide:not([selected])) {
           display: none;
         }
-        button {
+        .controller {
           position: absolute;
           top: calc(50% - 20px);
           padding: 0;
@@ -85,8 +97,8 @@ const fCarousel = class FCarousel extends LitElement {
           -ms-user-select: none;
           user-select: none;
         }
-        button:hover,
-        button:focus {
+        .controller:hover,
+        .controller:focus {
           opacity: 1;
         }
         #prevBtn {
@@ -95,9 +107,36 @@ const fCarousel = class FCarousel extends LitElement {
         #nextBtn {
           right: 12px;
         }
-        button[disabled] {
+        .controller[disabled] {
           opacity: 0.4;
           cursor: default;
+        }
+        .navigators {
+          display: none;
+        }
+        .indicator {
+          display: none;
+          position: absolute;
+          top: 50%;
+          left: 0;
+          right: 0;
+          text-align: center;
+        }
+        .bullet {
+          background-color: hsla(0, 0%, 100%, .5);
+          width: 9px;
+          height: 9px;
+          padding: 0;
+          border-radius: 50%;
+          border: 2px solid transparent;
+          transition: all .3s ease-in-out;
+          cursor: pointer;
+          line-height: 0;
+          box-shadow: 0 0.25em 0.5em 0 rgba(0,0,0,.1);
+          margin: 0 .25em;
+        }
+        .bullet[selected] {
+          background-color: #3498db;
         }
       </style>
       ${template(this)}
@@ -132,44 +171,90 @@ const fCarousel = class FCarousel extends LitElement {
     this.requestUpdate();
   }
 
+  autoPlay () {
+    if (!this.autoplay) {
+      return
+    }
+    this.autoPlayInterval = setInterval(() => this.nextSlide(), this.interval);
+  }
+
+  createNavigator () {
+    if (!this.navigator) {
+      return
+    }
+    this.shadowRoot.querySelector('.navigators').style.display = 'block';
+    this.requestUpdate();
+  }
+
+  createIndicator () {
+    if (!this.indicator) {
+      return
+    }
+    const indicatorNode = this.shadowRoot.querySelector('.indicator');
+    const bullets = [];
+    for (let i = 0; i < this.slideElements.length; i++) {
+      const bulletElement = document.createElement('button');
+      bulletElement.classList.add('bullet');
+      if (i === 0) {
+        bulletElement.setAttribute('selected', '');
+      }
+      indicatorNode.appendChild(bulletElement);
+      bullets.push(bulletElement);
+    }
+    indicatorNode.style.display = 'block';
+    return [...bullets];
+  }
+
   nextButtonHandle () {
-    this.selectedElement = this.slideElements[this.index];
-    this.nextSlide();
+    clearInterval(this.autoPlayInterval);
+    this.nextSlide()
+      .then(() => this.autoPlay());
   }
 
   prevButtonHandle () {
-    this.selectedElement = this.slideElements[this.index];
-    this.prevSlide();
+    clearInterval(this.autoPlayInterval);
+    this.prevSlide()
+      .then(() => this.autoPlay());
   }
 
   nextSlide() {
-    this.nextFlag = true;
-    const resetNode = this.getResetNode();
-    this.resetStyle(resetNode);
-    this.nextNode = this.getNextNode();
-    this.afterNextNode = this.getAfterNextNode();
-    this.currentNextSlideAnim(this.selectedElement);
-    this.slideInSlide(this.nextNode);
-    this.removeSelected(this.selectedElement);
-    this.setSelected(this.nextNode);
-    this.resetInitial();
-    this.slidesWrap.addEventListener('transitionend', () => this.validNextSlide(this.afterNextNode));
-    this.index = (this.index < this.slideElements.length - 1) ? this.index + 1 : 0;
+    return new Promise(resolve => {
+      this.nextFlag = true;
+      this.selectedElement = this.slideElements[this.index];
+      const resetNode = this.getResetNode();
+      this.resetStyle(resetNode);
+      this.nextNode = this.getNextNode();
+      this.afterNextNode = this.getAfterNextNode();
+      this.currentNextSlideAnim(this.selectedElement);
+      this.slideInSlide(this.nextNode);
+      this.removeSelected(this.selectedElement);
+      this.setSelected(this.nextNode);
+      this.resetInitial();
+      this.slidesWrap.addEventListener('transitionend', () => this.validNextSlide(this.afterNextNode));
+      this.indicatorControll();
+      this.index = (this.index < this.slideElements.length - 1) ? this.index + 1 : 0;
+      resolve();
+    });
   }
 
   prevSlide () {
-    this.prevFlag = true;
-    const resetNode = this.getResetNode();
-    this.resetStyle(resetNode);
-    this.prevNode = this.getPrevNode();
-    this.beforePrevNode = this.getBeforePrevNode();
-    this.currentPrevSlideAnim(this.selectedElement);
-    this.slideInSlide(this.prevNode);
-    this.removeSelected(this.selectedElement);
-    this.setSelected(this.prevNode);
-    this.resetInitial();
-    this.slidesWrap.addEventListener('transitionend', () => this.validPrevSlide(this.beforePrevNode));
-    this.index = (this.index > 0) ? this.index - 1 : this.slideElements.length - 1;
+    return new Promise(resolve => {
+      this.prevFlag = true;
+      this.selectedElement = this.slideElements[this.index];
+      const resetNode = this.getResetNode();
+      this.resetStyle(resetNode);
+      this.prevNode = this.getPrevNode();
+      this.beforePrevNode = this.getBeforePrevNode();
+      this.currentPrevSlideAnim(this.selectedElement);
+      this.slideInSlide(this.prevNode);
+      this.removeSelected(this.selectedElement);
+      this.setSelected(this.prevNode);
+      this.resetInitial();
+      this.slidesWrap.addEventListener('transitionend', () => this.validPrevSlide(this.beforePrevNode));
+      this.indicatorControll();
+      this.index = (this.index > 0) ? this.index - 1 : this.slideElements.length - 1;
+      resolve();
+    });
   }
 
   validPrevSlide (node) {
@@ -261,6 +346,23 @@ const fCarousel = class FCarousel extends LitElement {
     this.slidesWrap.style.transform = `translate3d(0, 0, 0)`;
   }
 
+  indicatorControll () {
+    let removedBullet = null;
+    let selectedBullet = null;
+    if (this.nextFlag) {
+      removedBullet = this.indicatorBullets[this.index - 1];
+      removedBullet = removedBullet ? removedBullet : this.indicatorBullets[this.indicatorBullets.length - 1];
+      selectedBullet = this.indicatorBullets[this.index];
+    }
+    if (this.prevFlag) {
+      removedBullet = this.indicatorBullets[this.index];
+      selectedBullet = this.indicatorBullets[this.index + 1];
+      selectedBullet = selecteddBullet ? selectedBullet : this.indicatorBullets[0];
+    }
+    this.removeSelected(removedBullet);
+    this.setSelected(selectedBullet);
+  }
+
   onSwipeStart (e) {
     if (this.isTouchDevice) {
       if (e.touches.length > 1 || e.scale && e.scale !== 1) {
@@ -281,6 +383,7 @@ const fCarousel = class FCarousel extends LitElement {
 
   onSwipeMove (e) {
     this.swipeMoving = true;
+    clearInterval(this.autoPlayInterval);
     this.selectedElement = this.slideElements[this.index];
     const offset = {
       x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
@@ -300,9 +403,11 @@ const fCarousel = class FCarousel extends LitElement {
     }
     if (Math.abs(this.moveDistance.x) > this.clientWidth / 2) {
       if (this.moveDistance.x < 0) {
-        this.nextSlide();
+        this.nextSlide()
+          .then(() => this.autoPlay());
       } else {
-        this.prevSlide();
+        this.prevSlide()
+          .then(() => this.autoPlay());
       }
     } else {
       this.resetInitial();

@@ -1,4 +1,5 @@
 import { LitElement, html} from 'lit-element';
+import template from './template';
 
 const fCarouselSlide = class FCarouselSlide extends LitElement {
   static get properties() {
@@ -8,7 +9,6 @@ const fCarouselSlide = class FCarouselSlide extends LitElement {
 
   constructor() {
     super();
-    this.test = 'テストだよーん'
   }
 
   render() {
@@ -20,7 +20,7 @@ const fCarouselSlide = class FCarouselSlide extends LitElement {
           box-sizing: border-box;
         }
       </style>
-      <slot></slot>
+      ${template(this)}
     `;
   }
 

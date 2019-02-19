@@ -20,7 +20,13 @@ const litApp =  class LitApp extends LitElement {
       text-align: center;
     }
     </style>
-    <f-carousel width="100%">
+    <f-carousel width="100%" autoplay interval="2000" navigator indicator>
+      <!--options
+       * width="{number}%"
+       * autoplay
+       * interval="number"
+       * navigator
+       * indicator -->
       <f-carousel-slide>
         <h3>
           1
