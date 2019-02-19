@@ -135,21 +135,29 @@ const fCarousel = class FCarousel extends LitElement {
   nextButtonHandle () {
     clearInterval(this.autoPlayInterval);
     this.nextSlide()
-      .then(() => this.autoPlay());
+      .then(() => {
+        this.nextFlag = false;
+        this.prevFlag = false;
+        this.autoPlay();
+      });
   }
 
   prevButtonHandle () {
     clearInterval(this.autoPlayInterval);
     this.prevSlide()
-      .then(() => this.autoPlay());
+      .then(() => {
+        this.nextFlag = false;
+        this.prevFlag = false;
+        this.autoPlay();
+      });
   }
 
   nextSlide() {
     return new Promise(resolve => {
       this.nextFlag = true;
       this.selectedElement = this.slideElements[this.index];
-      const resetNode = this.getResetNode();
-      this.resetStyle(resetNode);
+      const resetNodes = this.getResetNodes();
+      this.resetStyle(resetNodes);
       this.nextNode = this.getNextNode();
       this.afterNextNode = this.getAfterNextNode();
       this.currentNextSlideAnim(this.selectedElement);
@@ -168,8 +176,8 @@ const fCarousel = class FCarousel extends LitElement {
     return new Promise(resolve => {
       this.prevFlag = true;
       this.selectedElement = this.slideElements[this.index];
-      const resetNode = this.getResetNode();
-      this.resetStyle(resetNode);
+      const resetNodes = this.getResetNodes();
+      this.resetStyle(resetNodes);
       this.prevNode = this.getPrevNode();
       this.beforePrevNode = this.getBeforePrevNode();
       this.currentPrevSlideAnim(this.selectedElement);
@@ -251,21 +259,28 @@ const fCarousel = class FCarousel extends LitElement {
     target.style.transform = `translate3d(${this.translateValue }%, 0, 0)`;
   }
 
-  getResetNode (){
-    let resetNode = null;
-    if (this.nextFlag) {
-      resetNode = this.slideElements[this.index - 1];
-      resetNode = resetNode  ? resetNode : this.slideElements[this.slideElements.length - 1];
-    }
-    if (this.prevFlag) {
-      resetNode = this.slideElements[this.index + 1];
-      resetNode = resetNode  ? resetNode : this.slideElements[0];
-    }
-    return resetNode;
+  getResetNodes (){
+    const resetNodes = [];
+    this.slideElements.forEach(e => {
+      if (e !== this.slideElements[this.index]) {
+        resetNodes.push(e);
+      }
+    });
+    // if (this.nextFlag) {
+    //   resetNode = this.slideElements[this.index - 1];
+    //   resetNode = resetNode  ? resetNode : this.slideElements[this.slideElements.length - 1];
+    // }
+    // if (this.prevFlag) {
+    //   resetNode = this.slideElements[this.index + 1];
+    //   resetNode = resetNode  ? resetNode : this.slideElements[0];
+    // }
+    return resetNodes;
   }
 
-  resetStyle (target) {
-    target.style = '';
+  resetStyle (targets) {
+    targets.forEach(e => {
+      e.style = '';
+    });
   }
 
   resetInitial () {
@@ -282,9 +297,14 @@ const fCarousel = class FCarousel extends LitElement {
       selectedBullet = this.indicatorBullets[this.index];
     }
     if (this.prevFlag) {
-      removedBullet = this.indicatorBullets[this.index];
-      selectedBullet = this.indicatorBullets[this.index + 1];
-      selectedBullet = selectedBullet ? selectedBullet : this.indicatorBullets[0];
+      removedBullet = this.indicatorBullets[this.index - 1];
+      removedBullet = removedBullet ? removedBullet : this.indicatorBullets[this.indicatorBullets.length - 1];
+      selectedBullet = this.indicatorBullets[this.index - 2];
+      if (!selectedBullet && this.index === 1) {
+        selectedBullet = this.indicatorBullets[this.indicatorBullets.length - 1];
+      } else if (!selectedBullet && this.index === 0) {
+        selectedBullet = this.indicatorBullets[this.indicatorBullets.length - 2];
+      }
     }
     this.removeSelected(removedBullet);
     this.setSelected(selectedBullet);

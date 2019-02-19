@@ -20,7 +20,7 @@ const litApp =  class LitApp extends LitElement {
       text-align: center;
     }
     </style>
-    <f-carousel width="100%" autoplay interval="2000" navigator indicator>
+    <f-carousel width="100%" interval="2000" navigator indicator>
       <!--options
        * width="{number}%"
        * autoplay
@@ -52,8 +52,20 @@ const litApp =  class LitApp extends LitElement {
           5
         </h3>
       </f-carousel-slide>
-      <f-carousel-slide data-index="3">
-        <img src="https://www.pakutaso.com/shared/img/thumb/pakutaso-4860_TP_V.jpg" alt="responsive image" width="100%">
+      <f-carousel-slide>
+        <h3>
+          6
+        </h3>
+      </f-carousel-slide>
+      <f-carousel-slide>
+        <h3>
+          7
+        </h3>
+      </f-carousel-slide>
+      <f-carousel-slide>
+        <h3>
+          8
+        </h3>
       </f-carousel-slide>
     </f-carousel>
     `;
