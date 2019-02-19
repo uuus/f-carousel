@@ -19,20 +19,12 @@ const fCarousel = class FCarousel extends LitElement {
     this.nextNode = null;
     this.width = '100%';
     this.swipeMoving = false;
+    this.nextFlag = false;
+    this.prevFlag = false;
     this.isTouchDevice = 'ontouchstart' in window;
     this.swipeStart    = this.isTouchDevice ? 'touchstart' : 'mousedown';
     this.swipeMove     = this.isTouchDevice ? 'touchmove'  : 'mousemove';
     this.swipeEnd      = this.isTouchDevice ? 'touchend'   : 'mouseup';
-  }
-
-  setSelected (target) {
-    target.setAttribute('selected', '');
-    this.requestUpdate();
-  }
-
-  removeSelected (target) {
-    target.removeAttribute('selected');
-    this.requestUpdate();
   }
 
   attributeChangedCallback(name, oldval, newval) {
@@ -42,10 +34,11 @@ const fCarousel = class FCarousel extends LitElement {
 
   async firstUpdated () {
     await this.updateComplete;
+    this.translateValue = 100 + (100 - parseInt(this.width)); // %
     this.slideElements = [...this.children];
     this.slidesWrap = this.shadowRoot.querySelector('.slides');
     this.setSelected(this.slideElements[0]);
-    this.cloneSlide();
+    this.cloneLastSlide();
     this.addEventListener(this.swipeStart, this.onSwipeStart);
   }
 
@@ -111,14 +104,14 @@ const fCarousel = class FCarousel extends LitElement {
     `;
   }
 
-  cloneSlide() {
+  cloneLastSlide() {
     const lastNode = this.slideElements[this.slideElements.length - 1];
     const cloneLastSlide  = lastNode.cloneNode(true);
     this.addSlideFirst(cloneLastSlide);
     this.validNextSlide(this.slideElements[1]);
     lastNode.parentNode.removeChild(lastNode);
     this.slideElements = [...this.children];
-    this.index++;
+    this.index = 1;
   }
 
   addSlideFirst (node) {
@@ -129,130 +122,143 @@ const fCarousel = class FCarousel extends LitElement {
     node.style.transform = `translate3d(-${translateValue}%, 0, 0)`;
   }
 
-  next () {
-    this.slidesWrap.style.transform = `translate3d(0, 0, 0)`;
-    let index = this.index
-    if (index === 0) {
-      this.removeSelected(this.slideElements[index]);
-      this.setSelected(this.slideElements[index + 1]);
-      this.resetStyle(this.slideElements[this.slideElements.length - 1]);
-      this.nextSlideAnimation(this.slideElements, index);
-      this.index++;
-    } else if (index !== 0 && index < this.slideElements.length - 1) {
-      this.removeSelected(this.slideElements[index]);
-      this.setSelected(this.slideElements[index + 1]);
-      this.resetStyle(this.slideElements[index - 1]);
-      this.nextSlideAnimation(this.slideElements, index);
-      this.index++;
-    } else {
-      this.removeSelected(this.slideElements[index]);
-      this.setSelected(this.slideElements[0]);
-      this.resetStyle(this.slideElements[index - 1]);
-      this.nextSlideAnimationLast(this.slideElements, index);
-      this.index = 0;
-    }
+  setSelected (target) {
+    target.setAttribute('selected', '');
+    this.requestUpdate();
   }
 
-  previous () {
-    this.slidesWrap.style.transform = `translate3d(0, 0, 0)`;
-    let index = this.index
-    if (index === 0) {
-      this.removeSelected(this.slideElements[index]);
-      this.setSelected(this.slideElements[this.slideElements.length - 1]);
-      this.resetStyle(this.slideElements[index + 1]);
-      this.prevSlideAnimationFirst(this.slideElements, index);
-      this.index = this.slideElements.length - 1;
-    } else if (index !== this.slideElements.length - 1 && index > 0) {
-      this.removeSelected(this.slideElements[index]);
-      this.setSelected(this.slideElements[index - 1]);
-      this.resetStyle(this.slideElements[index + 1]);
-      this.prevSlideAnimation(this.slideElements, index);
-      this.index--;
-    } else {
-      this.removeSelected(this.slideElements[index]);
-      this.setSelected(this.slideElements[index - 1]);
-      this.resetStyle(this.slideElements[0]);
-      this.prevSlideAnimation(this.slideElements, index);
-      this.index--;
-    }
+  removeSelected (target) {
+    target.removeAttribute('selected');
+    this.requestUpdate();
   }
 
-  nextSlideAnimation (target, index) {
-    this.nextAnimationStyle(target[index + 1]);
-    this.currentNextAnimationStyle(target[index]);
-    setTimeout(() => {
-      target[index + 1].style.transform = 'translate3d(0, 0, 0)';
-    }, 10);
+  nextButtonHandle () {
+    this.selectedElement = this.slideElements[this.index];
+    this.nextSlide();
   }
 
-  nextSlideAnimationLast (target, index) {
-    this.nextAnimationStyle(target[0]);
-    this.currentNextAnimationStyle(target[index]);
-    setTimeout(() => {
-      target[0].style.transform = 'translate3d(0, 0, 0)';
-    }, 10);
+  prevButtonHandle () {
+    this.selectedElement = this.slideElements[this.index];
+    this.prevSlide();
   }
 
-  nextAnimationStyle (target) {
-    const translateValue = 100 + (100 - parseInt(this.width));
-    target.style.display = 'inline-block';
-    target.style.transition = 'transform 300ms ease';
-    target.style.transform = `translate3d(${translateValue}%, 0, 0)`;
+  nextSlide() {
+    this.nextFlag = true;
+    const resetNode = this.getResetNode();
+    this.resetStyle(resetNode);
+    this.nextNode = this.getNextNode();
+    this.afterNextNode = this.getAfterNextNode();
+    this.currentNextSlideAnim(this.selectedElement);
+    this.slideInSlide(this.nextNode);
+    this.removeSelected(this.selectedElement);
+    this.setSelected(this.nextNode);
+    this.resetInitial();
+    this.slidesWrap.addEventListener('transitionend', () => this.validNextSlide(this.afterNextNode));
+    this.index = (this.index < this.slideElements.length - 1) ? this.index + 1 : 0;
   }
 
-  currentNextAnimationStyle (target) {
-    const translateValue = 100 + (100 - parseInt(this.width));
-    target.style.display = 'inline-block';
-    target.style.transition = 'transform 300ms ease';
-    target.style.transform = `translate3d(-${translateValue}%, 0, 0)`;
-  }
-
-  prevSlideAnimation (target, index) {
-    this.prevAnimationStyle(target[index - 1]);
-    this.currentPrevAnimationStyle(target[index]);
-    setTimeout(() => {
-      target[index - 1].style.transform = 'translate3d(0, 0, 0)';
-    }, 10);
-  }
-
-  prevSlideAnimationFirst (target, index) {
-    this.prevAnimationStyle(target[target.length - 1]);
-    this.currentPrevAnimationStyle(target[index]);
-    setTimeout(() => {
-      target[target.length - 1].style.transform = 'translate3d(0, 0, 0)';
-    }, 10);
-  }
-
-  prevAnimationStyle (target) {
-    const translateValue = 100 + (100 - parseInt(this.width));
-    target.style.display = 'inline-block';
-    target.style.transition = 'transform 300ms ease';
-    target.style.transform = `translate3d(-${translateValue}%, 0, 0)`;
-  }
-
-  currentPrevAnimationStyle (target) {
-    const translateValue = 100 + (100 - parseInt(this.width));
-    target.style.display = 'inline-block';
-    target.style.transition = 'transform 300ms ease';
-    target.style.transform = `translate3d(${translateValue}%, 0, 0)`;
+  prevSlide () {
+    this.prevFlag = true;
+    const resetNode = this.getResetNode();
+    this.resetStyle(resetNode);
+    this.prevNode = this.getPrevNode();
+    this.beforePrevNode = this.getBeforePrevNode();
+    this.currentPrevSlideAnim(this.selectedElement);
+    this.slideInSlide(this.prevNode);
+    this.removeSelected(this.selectedElement);
+    this.setSelected(this.prevNode);
+    this.resetInitial();
+    this.slidesWrap.addEventListener('transitionend', () => this.validPrevSlide(this.beforePrevNode));
+    this.index = (this.index > 0) ? this.index - 1 : this.slideElements.length - 1;
   }
 
   validPrevSlide (node) {
-    const translateValue = 100 + (100 - parseInt(this.width));
+    // 一つ前のスライドを表示する
     node.style.display = 'inline-block';
     node.style.transition = 'transform 300ms ease';
-    node.style.transform = `translate3d(-${translateValue}%, 0, 0)`;
+    node.style.transform = `translate3d(-${this.translateValue}%, 0, 0)`;
   }
 
   validNextSlide (node) {
-    const translateValue = 100 + (100 - parseInt(this.width));
+    // 一つ後のスライドを表示する
     node.style.display = 'inline-block';
     node.style.transition = 'transform 300ms ease';
-    node.style.transform = `translate3d(${translateValue}%, 0, 0)`;
+    node.style.transform = `translate3d(${this.translateValue}%, 0, 0)`;
+  }
+
+  slideInSlide (node) {
+    // 出現させたスライドを真ん中へ
+    node.style.display = 'inline-block';
+    node.style.transition = 'transform 300ms ease';
+    node.style.transform = `translate3d(0, 0, 0)`;
+  }
+
+  getNextNode () {
+    let nextNode = this.slideElements[this.index + 1];
+    nextNode = nextNode ? nextNode : this.slideElements[0];
+    return nextNode;
+  }
+
+  getAfterNextNode () {
+    let afterNextNode = this.slideElements[this.index + 2];
+    if (!afterNextNode && this.index === this.slideElements.length - 1) {
+      afterNextNode = this.slideElements[1];
+    } else if (!afterNextNode && this.index === this.slideElements.length - 2) {
+      afterNextNode = this.slideElements[0];
+    }
+    return afterNextNode;
+  }
+
+  getPrevNode () {
+    let prevNode = this.slideElements[this.index - 1];
+    prevNode = prevNode ? prevNode : this.slideElements[this.slideElements.length - 1];
+    return prevNode;
+  }
+
+  getBeforePrevNode () {
+    let prevPrevNode = this.slideElements[this.index - 2];
+    if (!prevPrevNode && this.index === 0) {
+      prevPrevNode = this.slideElements[this.slideElements.length - 2];
+    } else if (!prevPrevNode && this.index === 1) {
+      prevPrevNode = this.slideElements[this.slideElements.length - 1];
+    }
+    return prevPrevNode;
+  }
+
+  currentNextSlideAnim (target) {
+    // 現在のスライドを次に送る
+    target.style.display = 'inline-block';
+    target.style.transition = 'transform 300ms ease';
+    target.style.transform = `translate3d(-${this.translateValue}%, 0, 0)`;
+  }
+
+  currentPrevSlideAnim (target) {
+    // 現在のスライドを前に送る
+    target.style.display = 'inline-block';
+    target.style.transition = 'transform 300ms ease';
+    target.style.transform = `translate3d(${this.translateValue }%, 0, 0)`;
+  }
+
+  getResetNode (){
+    let resetNode = null;
+    if (this.nextFlag) {
+      resetNode = this.slideElements[this.index - 1];
+      resetNode = resetNode  ? resetNode : this.slideElements[this.slideElements.length - 1];
+    }
+    if (this.prevFlag) {
+      resetNode = this.slideElements[this.index + 1];
+      resetNode = resetNode  ? resetNode : this.slideElements[0];
+    }
+    return resetNode;
   }
 
   resetStyle (target) {
     target.style = '';
+  }
+
+  resetInitial () {
+    this.slidesWrap.style.transition = `transform 300ms ease`;
+    this.slidesWrap.style.transform = `translate3d(0, 0, 0)`;
   }
 
   onSwipeStart (e) {
@@ -261,7 +267,7 @@ const fCarousel = class FCarousel extends LitElement {
         return;
       }
     }
-    let offset = {
+    const offset = {
       x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
       y: this.isTouchDevice ? e.touches[0].pageY : e.pageY
     };
@@ -276,7 +282,7 @@ const fCarousel = class FCarousel extends LitElement {
   onSwipeMove (e) {
     this.swipeMoving = true;
     this.selectedElement = this.slideElements[this.index];
-    let offset = {
+    const offset = {
       x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
       y: this.isTouchDevice ? e.touches[0].pageY : e.pageY
     };
@@ -284,59 +290,28 @@ const fCarousel = class FCarousel extends LitElement {
       x: offset.x - this.startPoint.x,
       y: offset.y - this.startPoint.y
     };
+    this.slidesWrap.style.transition = 'none';
     this.slidesWrap.style.transform = `translate3d(${this.moveDistance.x}px, 0, 0)`;
   }
 
   onSwipeEnd () {
-    // this.currentIndex
     if (!this.swipeMoving) {
       return;
     }
-    if (this.moveDistance.x < 0) {
-      this.moveDistance.x = this.moveDistance.x * (-1);
-      this.nextNode = this.slideElements[this.index + 1];
-      this.nextNode = this.nextNode ? this.nextNode : this.slideElements[0];
-      this.nextNextNode = this.slideElements[this.index + 2];
-      console.log(this.index);
-      if (!this.nextNextNode && this.index === this.slideElements.length - 1) {
-        this.nextNextNode = this.slideElements[1];
-      } else if (!this.nextNextNode && this.index === this.slideElements.length - 2) {
-        this.nextNextNode = this.slideElements[0];
+    if (Math.abs(this.moveDistance.x) > this.clientWidth / 2) {
+      if (this.moveDistance.x < 0) {
+        this.nextSlide();
+      } else {
+        this.prevSlide();
       }
-      this.validNextSlide(this.nextNextNode);
-      this.currentNextAnimationStyle(this.selectedElement);
-      this.nextNode.style.transform = `translate3d(0, 0, 0)`;
-      this.slidesWrap.style.transform = `translate3d(0, 0, 0)`;
-      this.removeSelected(this.selectedElement);
-      this.setSelected(this.nextNode);
-      let resetNode = this.slideElements[this.index - 1];
-      resetNode = resetNode  ? resetNode : this.slideElements[this.slideElements.length - 1];
-      this.resetStyle(resetNode);
-      this.index = (this.index < this.slideElements.length - 1) ? this.index + 1 : 0;
     } else {
-      this.moveDistance.x = this.moveDistance.x * (-1);
-      this.prevNode = this.slideElements[this.index - 1];
-      this.prevNode = this.prevNode ? this.prevNode : this.slideElements[this.slideElements.length - 1];
-      this.prevPrevNode = this.slideElements[this.index - 2];
-      if (!this.prevPrevNode && this.index === 0) {
-        this.prevPrevNode = this.slideElements[this.slideElements.length - 2];
-      } else if (!this.prevPrevNode && this.index === 1) {
-        this.prevPrevNode = this.slideElements[this.slideElements.length - 1];
-      }
-      this.validPrevSlide(this.prevPrevNode);
-      this.currentPrevAnimationStyle(this.selectedElement);
-      this.prevNode.style.transform = `translate3d(0, 0, 0)`;
-      this.slidesWrap.style.transform = `translate3d(0, 0, 0)`;
-      this.removeSelected(this.selectedElement);
-      this.setSelected(this.prevNode);
-      let resetNode = this.slideElements[this.index + 1];
-      resetNode = resetNode  ? resetNode : this.slideElements[0];
-      this.resetStyle(resetNode);
-      this.index = (this.index > 0) ? this.index - 1 : this.slideElements.length - 1;
+      this.resetInitial();
     }
     this.removeEventListener(this.swipeMove, this.onSwipeMove);
     this.removeEventListener(this.swipeEnd, this.onSwipeEnd);
     this.swipeMoving = false;
+    this.nextFlag = false;
+    this.prevFlag = false;
   }
 }
 
