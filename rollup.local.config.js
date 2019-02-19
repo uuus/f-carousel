@@ -1,8 +1,8 @@
 import commonjs from 'rollup-plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
 import copy from 'rollup-plugin-copy';
-import serve from 'rollup-plugin-serve';
-import livereload from "rollup-plugin-livereload";
+import server from 'rollup-plugin-server';
+import livereload from 'rollup-plugin-livereload';
 
 export default {
   input: 'src/index.js',
@@ -22,7 +22,7 @@ export default {
     copy({
       'src/index.html':'dist/index.html'
     }),
-    serve({
+    server({
       contentBase: './dist/',
       port: 3008,
       open: true,

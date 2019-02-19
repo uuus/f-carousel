@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "a simple carousel component for FTO",
   "main": "index.js",
-  "flat": true,
   "author": "Yuki Usui",
   "scripts": {
     "start": "rollup -c rollup.local.config.js --watch -m"
@@ -11,39 +10,12 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "@glidejs/glide": "^3.2.6",
     "lit-element": "^2.0.1",
     "rollup": "^1.1.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-copy": "^0.2.3",
     "rollup-plugin-livereload": "^1.0.0",
     "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-serve": "^1.0.1"
-  },
-  "resolutions": {
-    "kind-of": "6.0.2",
-    "is-number": "4.0.0",
-    "micromatch": "3.1.10",
-    "arr-diff": "4.0.0",
-    "array-unique": "0.3.2",
-    "braces": "2.3.2",
-    "expand-brackets": "2.1.4",
-    "extglob": "2.0.4",
-    "fill-range": "4.0.0",
-    "isobject": "3.0.1",
-    "is-extendable": "1.0.1",
-    "define-property": "2.0.2",
-    "extend-shallow": "3.0.2",
-    "is-descriptor": "1.0.2",
-    "is-accessor-descriptor": "1.0.0",
-    "is-data-descriptor": "1.0.0",
-    "has-value": "1.0.0",
-    "set-value": "2.0.0",
-    "has-values": "1.0.0",
-    "minimist": "1.2.0",
-    "string-width": "2.1.1",
-    "strip-ansi": "4.0.0",
-    "is-fullwidth-code-point": "2.0.0",
-    "ansi-regex": "3.0.0"
+    "rollup-plugin-server": "^0.7.0"
   }
 }

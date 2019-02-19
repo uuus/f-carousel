@@ -5,8 +5,8 @@ export default self => html`
       <slot></slot>
     </div>
     <div class="navigators">
-      <button id="prevBtn" class="controller" @click="${self.prevButtonHandle}">❮</button>
-      <button id="nextBtn" class="controller" @click="${self.nextButtonHandle}">❯</button>
+      <button id="prevBtn" class="controller" @click="${self.prevButtonHandle}"><</button>
+      <button id="nextBtn" class="controller" @click="${self.nextButtonHandle}">></button>
     </div>
     <div class="indicator">
     </div>
