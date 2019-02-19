@@ -284,7 +284,7 @@ const fCarousel = class FCarousel extends LitElement {
     if (this.prevFlag) {
       removedBullet = this.indicatorBullets[this.index];
       selectedBullet = this.indicatorBullets[this.index + 1];
-      selectedBullet = selecteddBullet ? selectedBullet : this.indicatorBullets[0];
+      selectedBullet = selectedBullet ? selectedBullet : this.indicatorBullets[0];
     }
     this.removeSelected(removedBullet);
     this.setSelected(selectedBullet);
