@@ -6,6 +6,8 @@ import server from 'rollup-plugin-server';
 import livereload from 'rollup-plugin-livereload';
 import filesize from 'rollup-plugin-filesize';
 
+import postcssPlugins from './postcss.plugins.js';
+
 export default {
   input: './src/index.js',
   output: {
@@ -22,7 +24,7 @@ export default {
     }),
     commonjs(),
     postcss({
-      map: true
+      plugins: postcssPlugins
     }),
     babel({
       // exclude: 'node_modules/**',
