@@ -49,6 +49,7 @@
   const isDirective = (o) => {
       return typeof o === 'function' && directives.has(o);
   };
+  //# sourceMappingURL=directive.js.map
 
   /**
    * @license
@@ -81,6 +82,7 @@
           node = n;
       }
   };
+  //# sourceMappingURL=dom.js.map
 
   /**
    * @license
@@ -104,6 +106,7 @@
    * A sentinel value that signals a NodePart to fully clear its content.
    */
   const nothing = {};
+  //# sourceMappingURL=part.js.map
 
   /**
    * @license
@@ -293,6 +296,7 @@
    *    * (') then any non-(')
    */
   const lastAttributeNameRegex = /([ \x09\x0a\x0c\x0d])([^\0-\x1F\x7F-\x9F \x09\x0a\x0c\x0d"'>=/]+)([ \x09\x0a\x0c\x0d]*=[ \x09\x0a\x0c\x0d]*(?:[^ \x09\x0a\x0c\x0d"'`<>=]*|"[^"]*|'[^']*))$/;
+  //# sourceMappingURL=template.js.map
 
   /**
    * @license
@@ -390,6 +394,7 @@
           return fragment;
       }
   }
+  //# sourceMappingURL=template-instance.js.map
 
   /**
    * @license
@@ -454,6 +459,7 @@
           return template;
       }
   }
+  //# sourceMappingURL=template-result.js.map
 
   /**
    * @license
@@ -878,6 +884,7 @@
       (eventOptionsSupported ?
           { capture: o.capture, passive: o.passive, once: o.once } :
           o.capture);
+  //# sourceMappingURL=parts.js.map
 
   /**
    * @license
@@ -929,6 +936,7 @@
       }
   }
   const defaultTemplateProcessor = new DefaultTemplateProcessor();
+  //# sourceMappingURL=default-template-processor.js.map
 
   /**
    * @license
@@ -976,6 +984,7 @@
       return template;
   }
   const templateCaches = new Map();
+  //# sourceMappingURL=template-factory.js.map
 
   /**
    * @license
@@ -1016,6 +1025,7 @@
       part.setValue(result);
       part.commit();
   };
+  //# sourceMappingURL=render.js.map
 
   /**
    * @license
@@ -1039,6 +1049,7 @@
    * render to and update a container.
    */
   const html = (strings, ...values) => new TemplateResult(strings, values, 'html', defaultTemplateProcessor);
+  //# sourceMappingURL=lit-html.js.map
 
   /**
    * @license
@@ -1163,6 +1174,7 @@
           }
       }
   }
+  //# sourceMappingURL=modify-template.js.map
 
   /**
    * @license
@@ -1402,6 +1414,7 @@
           window.ShadyCSS.styleElement(container.host);
       }
   };
+  //# sourceMappingURL=shady-render.js.map
 
   /**
    * @license
@@ -1962,6 +1975,7 @@
    * Marks class as having finished creating properties.
    */
   UpdatingElement.finalized = true;
+  //# sourceMappingURL=updating-element.js.map
 
   /**
    * @license
@@ -1976,6 +1990,7 @@
    * subject to an additional IP rights grant found at
    * http://polymer.github.io/PATENTS.txt
    */
+  //# sourceMappingURL=decorators.js.map
 
   /**
   @license
@@ -1989,6 +2004,7 @@
   */
   const supportsAdoptingStyleSheets = ('adoptedStyleSheets' in Document.prototype) &&
       ('replace' in CSSStyleSheet.prototype);
+  //# sourceMappingURL=css-tag.js.map
 
   /**
    * @license
@@ -2180,6 +2196,7 @@
    * @nocollapse
    */
   LitElement.render = render$1;
+  //# sourceMappingURL=lit-element.js.map
 
   function _templateObject() {
     var data = _taggedTemplateLiteralLoose(["\n    <div class=\"slides\">\n      <slot></slot>\n    </div>\n    <div class=\"navigators\">\n      <button id=\"prevBtn\" class=\"controller\" @click=\"", "\"><</button>\n      <button id=\"nextBtn\" class=\"controller\" @click=\"", "\">></button>\n    </div>\n    <div class=\"indicator\">\n    </div>\n  "]);
@@ -2221,7 +2238,7 @@
     }
   }
 
-  var css = ":host {\n  display: block;\n  position:relative;\n  overflow:hidden;\n  height: 350px;\n}\n\ndiv {\n  display: flex;\n}\n\n::slotted(f-carousel-slide:not([selected])) {\n  display: none;\n}\n\n.controller {\n  position: absolute;\n  top: calc(50% - 20px);\n  padding: 0;\n  line-height: 40px;\n  border: none;\n  background: none;\n  color: #DDD;\n  font-size: 40px;\n  font-weight: bold;\n  cursor: pointer;\n  opacity: 0.7;\n  -moz-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.controller:hover, .controller:focus {\n  opacity: 1;\n}\n\n#prevBtn {\n  left: 12px;\n}\n\n#nextBtn {\n  right: 12px;\n}\n\n.controller[disabled] {\n  opacity: 0.4;\n  cursor: default;\n}\n\n.navigators {\n  display: none;\n}\n\n.indicator {\n  display: none;\n  position: absolute;\n  top: 50%;\n  left: 0;\n  right: 0;\n  text-align: center;\n}\n\n.bullet {\n  background-color: hsla(0, 0%, 100%, .5);\n  width: 9px;\n  height: 9px;\n  padding: 0;\n  border-radius: 50%;\n  border: 2px solid transparent;\n  transition: all .3s ease-in-out;\n  cursor: pointer;\n  line-height: 0;\n  box-shadow: 0 0.25em 0.5em 0 rgba(0,0,0,.1);\n  margin: 0 .25em;\n}\n\n.bullet[selected] {\n  background-color: #3498db;\n}\n";
+  var css = ":host {\n  display: block;\n  position:relative;\n  overflow:hidden;\n  height: 300px;\n}\n\ndiv {\n  display: flex;\n}\n\n::slotted(f-carousel-slide:not([selected])) {\n  display: none;\n}\n\n.controller {\n  position: absolute;\n  top: calc(50% - 20px);\n  padding: 0;\n  line-height: 40px;\n  border: none;\n  background: none;\n  color: #DDD;\n  font-size: 40px;\n  font-weight: bold;\n  cursor: pointer;\n  opacity: 0.7;\n  -moz-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.controller:hover, .controller:focus {\n  opacity: 1;\n}\n\n#prevBtn {\n  left: 12px;\n}\n\n#nextBtn {\n  right: 12px;\n}\n\n.controller[disabled] {\n  opacity: 0.4;\n  cursor: default;\n}\n\n.navigators {\n  display: none;\n}\n\n.indicator {\n  display: none;\n  position: absolute;\n  top: 50%;\n  left: 0;\n  right: 0;\n  text-align: center;\n}\n\n.bullet {\n  background-color: hsla(0, 0%, 100%, .5);\n  width: 9px;\n  height: 9px;\n  padding: 0;\n  border-radius: 50%;\n  border: 2px solid transparent;\n  transition: all .3s ease-in-out;\n  cursor: pointer;\n  line-height: 0;\n  box-shadow: 0 0.25em 0.5em 0 rgba(0,0,0,.1);\n  margin: 0 .25em;\n}\n\n.bullet[selected] {\n  background-color: #f88379;\n}\n";
   styleInject(css);
 
   function _templateObject$1() {
@@ -2309,7 +2326,7 @@
     }
 
     render() {
-      return html(_templateObject$1(), css, self.width, template(this));
+      return html(_templateObject$1(), css, this.width, template(this));
     }
 
     cloneLastSlide() {
@@ -2558,15 +2575,7 @@
         if (e !== _this6.slideElements[_this6.index]) {
           resetNodes.push(e);
         }
-      }); // if (this.nextFlag) {
-      //   resetNode = this.slideElements[this.index - 1];
-      //   resetNode = resetNode  ? resetNode : this.slideElements[this.slideElements.length - 1];
-      // }
-      // if (this.prevFlag) {
-      //   resetNode = this.slideElements[this.index + 1];
-      //   resetNode = resetNode  ? resetNode : this.slideElements[0];
-      // }
-
+      });
       return resetNodes;
     }
 

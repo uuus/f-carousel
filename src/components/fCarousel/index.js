@@ -68,7 +68,7 @@ const fCarousel = class FCarousel extends LitElement {
       ${css}
       ::slotted(f-carousel-slide) {
         position: absolute;
-        width: ${self.width};
+        width: ${this.width};
         top: 0;
         right: 0;
         left: 0;
@@ -78,6 +78,7 @@ const fCarousel = class FCarousel extends LitElement {
       ${template(this)}
     `;
   }
+
   cloneLastSlide() {
     const lastNode = this.slideElements[this.slideElements.length - 1];
     const cloneLastSlide  = lastNode.cloneNode(true);
@@ -274,14 +275,6 @@ const fCarousel = class FCarousel extends LitElement {
         resetNodes.push(e);
       }
     });
-    // if (this.nextFlag) {
-    //   resetNode = this.slideElements[this.index - 1];
-    //   resetNode = resetNode  ? resetNode : this.slideElements[this.slideElements.length - 1];
-    // }
-    // if (this.prevFlag) {
-    //   resetNode = this.slideElements[this.index + 1];
-    //   resetNode = resetNode  ? resetNode : this.slideElements[0];
-    // }
     return resetNodes;
   }
 
