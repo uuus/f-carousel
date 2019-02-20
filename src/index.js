@@ -1,4 +1,5 @@
 import FCarousel from './components/fCarousel';
-document.addEventListener('DOMContentLoaded', () => {
+import 'regenerator-runtime/runtime';
+document.addEventListener('load', () => {
   new FCarousel();
 });

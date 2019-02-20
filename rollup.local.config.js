@@ -25,7 +25,8 @@ export default {
       map: true
     }),
     babel({
-      exclude: 'node_modules/**',
+      // exclude: 'node_modules/**',
+      runtimeHelpers: true,
       presets: [[
         '@babel/preset-env',
         {
@@ -39,9 +40,24 @@ export default {
         }
       ]],
       plugins: [
-        ['@babel/plugin-transform-template-literals', {
-          'loose': true
-        }]
+        [
+          '@babel/plugin-transform-template-literals',
+          {
+            'loose': true
+          }
+        ],
+        [
+          '@babel/plugin-transform-runtime',
+          {
+            'corejs': false,
+            'helpers': true,
+            'regenerator': true,
+            'useESModules': true,
+          }
+        ],
+        [
+          '@babel/plugin-external-helpers',
+        ]
       ],
     }),
     filesize({
