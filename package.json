@@ -1,7 +1,7 @@
 {
   "name": "f-carousel",
   "version": "1.0.0",
-  "description": "a simple carousel component for FTO",
+  "description": "a simple carousel component",
   "main": "index.js",
   "author": "Yuki Usui",
   "scripts": {
