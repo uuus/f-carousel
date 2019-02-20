@@ -49,7 +49,6 @@
   const isDirective = (o) => {
       return typeof o === 'function' && directives.has(o);
   };
-  //# sourceMappingURL=directive.js.map
 
   /**
    * @license
@@ -82,7 +81,6 @@
           node = n;
       }
   };
-  //# sourceMappingURL=dom.js.map
 
   /**
    * @license
@@ -106,7 +104,6 @@
    * A sentinel value that signals a NodePart to fully clear its content.
    */
   const nothing = {};
-  //# sourceMappingURL=part.js.map
 
   /**
    * @license
@@ -296,7 +293,6 @@
    *    * (') then any non-(')
    */
   const lastAttributeNameRegex = /([ \x09\x0a\x0c\x0d])([^\0-\x1F\x7F-\x9F \x09\x0a\x0c\x0d"'>=/]+)([ \x09\x0a\x0c\x0d]*=[ \x09\x0a\x0c\x0d]*(?:[^ \x09\x0a\x0c\x0d"'`<>=]*|"[^"]*|'[^']*))$/;
-  //# sourceMappingURL=template.js.map
 
   /**
    * @license
@@ -394,7 +390,6 @@
           return fragment;
       }
   }
-  //# sourceMappingURL=template-instance.js.map
 
   /**
    * @license
@@ -459,7 +454,6 @@
           return template;
       }
   }
-  //# sourceMappingURL=template-result.js.map
 
   /**
    * @license
@@ -884,7 +878,6 @@
       (eventOptionsSupported ?
           { capture: o.capture, passive: o.passive, once: o.once } :
           o.capture);
-  //# sourceMappingURL=parts.js.map
 
   /**
    * @license
@@ -936,7 +929,6 @@
       }
   }
   const defaultTemplateProcessor = new DefaultTemplateProcessor();
-  //# sourceMappingURL=default-template-processor.js.map
 
   /**
    * @license
@@ -984,7 +976,6 @@
       return template;
   }
   const templateCaches = new Map();
-  //# sourceMappingURL=template-factory.js.map
 
   /**
    * @license
@@ -1025,7 +1016,6 @@
       part.setValue(result);
       part.commit();
   };
-  //# sourceMappingURL=render.js.map
 
   /**
    * @license
@@ -1049,7 +1039,6 @@
    * render to and update a container.
    */
   const html = (strings, ...values) => new TemplateResult(strings, values, 'html', defaultTemplateProcessor);
-  //# sourceMappingURL=lit-html.js.map
 
   /**
    * @license
@@ -1174,7 +1163,6 @@
           }
       }
   }
-  //# sourceMappingURL=modify-template.js.map
 
   /**
    * @license
@@ -1414,7 +1402,6 @@
           window.ShadyCSS.styleElement(container.host);
       }
   };
-  //# sourceMappingURL=shady-render.js.map
 
   /**
    * @license
@@ -1975,7 +1962,6 @@
    * Marks class as having finished creating properties.
    */
   UpdatingElement.finalized = true;
-  //# sourceMappingURL=updating-element.js.map
 
   /**
    * @license
@@ -1990,7 +1976,6 @@
    * subject to an additional IP rights grant found at
    * http://polymer.github.io/PATENTS.txt
    */
-  //# sourceMappingURL=decorators.js.map
 
   /**
   @license
@@ -2004,7 +1989,6 @@
   */
   const supportsAdoptingStyleSheets = ('adoptedStyleSheets' in Document.prototype) &&
       ('replace' in CSSStyleSheet.prototype);
-  //# sourceMappingURL=css-tag.js.map
 
   /**
    * @license
@@ -2196,7 +2180,6 @@
    * @nocollapse
    */
   LitElement.render = render$1;
-  //# sourceMappingURL=lit-element.js.map
 
   function _templateObject() {
     var data = _taggedTemplateLiteralLoose(["\n    <div class=\"slides\">\n      <slot></slot>\n    </div>\n    <div class=\"navigators\">\n      <button id=\"prevBtn\" class=\"controller\" @click=\"", "\"><</button>\n      <button id=\"nextBtn\" class=\"controller\" @click=\"", "\">></button>\n    </div>\n    <div class=\"indicator\">\n    </div>\n  "]);
