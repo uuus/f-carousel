@@ -65,7 +65,12 @@ const fCarousel = class FCarousel extends LitElement {
   render() {
     return html`
       <style>
-      ${css}
+      :host {
+        display: block;
+        position:relative;
+        overflow:hidden;
+        height: 200px;
+      }
       ::slotted(f-carousel-slide) {
         position: absolute;
         width: ${this.width};
@@ -74,6 +79,10 @@ const fCarousel = class FCarousel extends LitElement {
         left: 0;
         margin: 0 auto;
       }
+      ::slotted(f-carousel-slide:not([selected])) {
+        display: none;
+      }
+      ${css}
       </style>
       ${template(this)}
     `;
@@ -317,6 +326,7 @@ const fCarousel = class FCarousel extends LitElement {
         return;
       }
     }
+    e.preventDefault();
     const offset = {
       x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
       y: this.isTouchDevice ? e.touches[0].pageY : e.pageY
@@ -347,9 +357,11 @@ const fCarousel = class FCarousel extends LitElement {
 
   onSwipeEnd () {
     if (!this.swipeMoving) {
+      this.removeEventListener(this.swipeMove, this.onSwipeMove);
+      this.removeEventListener(this.swipeEnd, this.onSwipeEnd);
       return;
     }
-    if (Math.abs(this.moveDistance.x) > this.clientWidth / 2) {
+    if (Math.abs(this.moveDistance.x) > this.clientWidth / 3.6) {
       if (this.moveDistance.x < 0) {
         this.nextSlide()
           .then(() => this.autoPlay());
