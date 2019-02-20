@@ -6,6 +6,10 @@ const litApp =  class LitApp extends LitElement {
     return {};
   }
 
+  constructor() {
+    super();
+  }
+
   render() {
     return html`
     <style>

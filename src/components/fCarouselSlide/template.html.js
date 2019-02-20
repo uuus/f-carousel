@@ -1,5 +1,5 @@
 import { html } from 'lit-element';
 
-export default self => html`
+export default () => html`
     <slot></slot>
   `;

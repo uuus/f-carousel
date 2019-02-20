@@ -1,1 +1,4 @@
-import './app.js';
+import LitApp from './app.js';
+document.addEventListener('DOMContentLoaded', () => {
+  new LitApp();
+});

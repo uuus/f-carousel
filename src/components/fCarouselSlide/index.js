@@ -1,5 +1,6 @@
 import { LitElement, html} from 'lit-element';
 import template from './template';
+import css from './style.pcss';
 
 const fCarouselSlide = class FCarouselSlide extends LitElement {
   static get properties() {
@@ -14,11 +15,7 @@ const fCarouselSlide = class FCarouselSlide extends LitElement {
   render() {
     return html`
       <style>
-        :host {
-          display: block;
-          width: 100%;
-          box-sizing: border-box;
-        }
+        ${css}
       </style>
       ${template(this)}
     `;

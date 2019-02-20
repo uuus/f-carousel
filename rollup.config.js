@@ -1,5 +1,8 @@
-import commonjs from 'rollup-plugin-commonjs'
-import resolve from 'rollup-plugin-node-resolve'
+import resolve from 'rollup-plugin-node-resolve';
+import { terser } from 'rollup-plugin-terser';
+import commonjs from 'rollup-plugin-commonjs';
+import babel from 'rollup-plugin-babel';
+import postcss from 'rollup-plugin-postcss';
 
 export default {
   input: 'src/index.js',
@@ -12,6 +15,35 @@ export default {
     resolve({
       jsnext: true,
     }),
-    commonjs()
+    terser({
+      warnings: true,
+      mangle: {
+        module: true,
+      },
+    }),
+    commonjs(),
+    babel({
+      exclude: 'node_modules/**',
+      presets: [[
+        '@babel/preset-env',
+        {
+          exclude: ['transform-classes'],
+          targets: {
+            'chrome': 60,
+            'safari': 10,
+            'android': 4.4,
+          },
+          debug: true
+        }
+      ]],
+      plugins: [
+        ['@babel/plugin-transform-template-literals', {
+          'loose': true
+        }]
+      ],
+    }),
+    postcss({
+      map: false
+    }),
   ]
 }

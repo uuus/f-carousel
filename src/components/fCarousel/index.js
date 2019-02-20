@@ -1,6 +1,6 @@
 import { LitElement, html} from 'lit-element';
 import template from './template.html.js';
-import style from './style.css.js';
+import css from './style.pcss';
 
 const fCarousel = class FCarousel extends LitElement {
 
@@ -43,8 +43,8 @@ const fCarousel = class FCarousel extends LitElement {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
-  async firstUpdated () {
-    await this.updateComplete;
+  firstUpdated () {
+    this.updateComplete;
     this.translateValue = 100 + (100 - parseInt(this.width)); // %
     this.slideElements = [...this.children];
     this.slidesWrap = this.shadowRoot.querySelector('.slides');
@@ -65,7 +65,15 @@ const fCarousel = class FCarousel extends LitElement {
   render() {
     return html`
       <style>
-        ${style(this)}
+      ${css}
+      ::slotted(f-carousel-slide) {
+        position: absolute;
+        width: ${self.width};
+        top: 0;
+        right: 0;
+        left: 0;
+        margin: 0 auto;
+      }
       </style>
       ${template(this)}
     `;
