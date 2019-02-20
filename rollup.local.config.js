@@ -1,6 +1,4 @@
 import resolve from 'rollup-plugin-node-resolve'
-import { terser } from 'rollup-plugin-terser';
-import copy from 'rollup-plugin-copy';
 import commonjs from 'rollup-plugin-commonjs';
 import babel from 'rollup-plugin-babel';
 import postcss from 'rollup-plugin-postcss';
@@ -9,9 +7,9 @@ import livereload from 'rollup-plugin-livereload';
 import filesize from 'rollup-plugin-filesize';
 
 export default {
-  input: 'src/index.js',
+  input: './src/index.js',
   output: {
-    file: 'dist/js/bundle.js',
+    file: './src/f-carousel.js',
     format: 'iife',
     moduleName: 'f-carousel'
   },
@@ -21,12 +19,6 @@ export default {
       jsnext: true,
       main: true,
       browser: true
-    }),
-    terser({
-      warnings: true,
-      mangle: {
-        module: true,
-      },
     }),
     commonjs(),
     postcss({
@@ -52,14 +44,11 @@ export default {
         }]
       ],
     }),
-    copy({
-      'src/index.html':'dist/index.html'
-    }),
     filesize({
       showBrotliSize: true,
     }),
     server({
-      contentBase: './dist/',
+      contentBase: './src/',
       port: 3008,
       open: true,
     }),

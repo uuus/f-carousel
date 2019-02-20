@@ -1,4 +1,4 @@
-import LitApp from './app.js';
+import FCarousel from './components/fCarousel';
 document.addEventListener('DOMContentLoaded', () => {
-  new LitApp();
+  new FCarousel();
 });

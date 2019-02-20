@@ -5,9 +5,9 @@ import babel from 'rollup-plugin-babel';
 import postcss from 'rollup-plugin-postcss';
 
 export default {
-  input: 'src/index.js',
+  input: './src/index.js',
   output: {
-    file: 'dist/js/bundle.js',
+    file: './src/f-carousel.min.js',
     format: 'iife'
   },
   sourceMap: true,
@@ -33,7 +33,7 @@ export default {
             'safari': 10,
             'android': 4.4,
           },
-          debug: true
+          debug: false
         }
       ]],
       plugins: [
