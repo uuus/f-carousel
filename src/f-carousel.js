@@ -3576,6 +3576,11 @@
       });
     }
 
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      clearInterval(this.autoPlayInterval);
+    }
+
     render() {
       return html(_templateObject$1(), this.width, css, template(this));
     }
@@ -3876,12 +3881,10 @@
 
       e.preventDefault();
       var offset = {
-        x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
-        y: this.isTouchDevice ? e.touches[0].pageY : e.pageY
+        x: this.isTouchDevice ? e.touches[0].pageX : e.pageX
       };
       this.startPoint = {
-        x: offset.x,
-        y: offset.y
+        x: offset.x
       };
       this.addEventListener(this.swipeMove, this.onSwipeMove);
       this.addEventListener(this.swipeEnd, this.onSwipeEnd);
@@ -3892,12 +3895,10 @@
       clearInterval(this.autoPlayInterval);
       this.selectedElement = this.slideElements[this.index];
       var offset = {
-        x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
-        y: this.isTouchDevice ? e.touches[0].pageY : e.pageY
+        x: this.isTouchDevice ? e.touches[0].pageX : e.pageX
       };
       this.moveDistance = {
-        x: offset.x - this.startPoint.x,
-        y: offset.y - this.startPoint.y
+        x: offset.x - this.startPoint.x
       };
       this.slidesWrap.style.transition = 'none';
       this.slidesWrap.style.transform = "translate3d(" + this.moveDistance.x + "px, 0, 0)";

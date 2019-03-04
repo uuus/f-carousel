@@ -62,6 +62,11 @@ const fCarousel = class FCarousel extends LitElement {
     });
   }
 
+  disconnectedCallback () {
+    super.disconnectedCallback();
+    clearInterval(this.autoPlayInterval);
+  }
+
   render() {
     return html`
       <style>
@@ -328,12 +333,10 @@ const fCarousel = class FCarousel extends LitElement {
     }
     e.preventDefault();
     const offset = {
-      x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
-      y: this.isTouchDevice ? e.touches[0].pageY : e.pageY
+      x: this.isTouchDevice ? e.touches[0].pageX : e.pageX
     };
     this.startPoint = {
-      x: offset.x,
-      y: offset.y
+      x: offset.x
     };
     this.addEventListener(this.swipeMove, this.onSwipeMove);
     this.addEventListener(this.swipeEnd, this.onSwipeEnd);
@@ -344,12 +347,10 @@ const fCarousel = class FCarousel extends LitElement {
     clearInterval(this.autoPlayInterval);
     this.selectedElement = this.slideElements[this.index];
     const offset = {
-      x: this.isTouchDevice ? e.touches[0].pageX : e.pageX,
-      y: this.isTouchDevice ? e.touches[0].pageY : e.pageY
+      x: this.isTouchDevice ? e.touches[0].pageX : e.pageX
     };
     this.moveDistance = {
-      x: offset.x - this.startPoint.x,
-      y: offset.y - this.startPoint.y
+      x: offset.x - this.startPoint.x
     };
     this.slidesWrap.style.transition = 'none';
     this.slidesWrap.style.transform = `translate3d(${this.moveDistance.x}px, 0, 0)`;
